@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Admin Dashboard</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site-header"><div class="logo">BSHS ADMIN</div><nav><a href="admin-dashboard.html">Dashboard</a><a href="reports.html">Reports</a><a href="admin-claim-requests.html">Claim Requests</a><a href="claimed-items.html">Claimed Items</a><a href="#" onclick="adminLogout();return false">Logout</a></nav></header>
+<main class="page"><h1>Admin Dashboard</h1><p class="sub">Manage student reports and claim requests.</p><div class="cards">
+<div class="card"><h3 id="r">0</h3><p>Total Reports</p></div><div class="card"><h3 id="p">0</h3><p>Pending Reports</p></div><div class="card"><h3 id="c">0</h3><p>Pending Claims</p></div><div class="card"><h3 id="a">0</h3><p>Approved Found Items</p></div>
+</div></main><script>
+if(localStorage.getItem("bshs_admin")!=="true")location.href="admin-login.html";
+function adminLogout(){localStorage.removeItem("bshs_admin");location.href="admin-login.html"}
+const reports=JSON.parse(localStorage.getItem("bshs_reports")||"[]"),claims=JSON.parse(localStorage.getItem("bshs_claims")||"[]");
+document.getElementById("r").textContent=reports.length;document.getElementById("p").textContent=reports.filter(x=>x.status==="Pending").length;document.getElementById("c").textContent=claims.filter(x=>x.status==="Pending").length;document.getElementById("a").textContent=reports.filter(x=>x.type==="Found Item"&&x.status==="Approved").length;
+</script></body></html>

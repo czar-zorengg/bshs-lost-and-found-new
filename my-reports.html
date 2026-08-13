@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>My Reports</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site-header"><div class="logo">BSHS LOST AND FOUND HUB</div><nav id="studentNav"></nav></header>
+<main class="page"><h1>My Reports</h1><p class="sub" id="ownerText"></p>
+<div class="table-wrap"><table><thead><tr><th>Item</th><th>Type</th><th>Category</th><th>Location</th><th>Date</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></main>
+<script src="app.js"></script><script>
+renderStudentNav();
+const owner=reportOwner(); document.getElementById("ownerText").textContent=isLoggedIn()?"Reports linked to your student account.":"Reports submitted from this browser. Login is not required.";
+const rows=document.getElementById("rows");
+const data=getJSON(DB.reports).filter(r=>r.ownerType===owner.type&&r.ownerId===owner.id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+if(!data.length) rows.innerHTML='<tr><td colspan="6" class="empty">No reports found yet. <a href="report.html" style="color:#1e3a8a;font-weight:bold">Submit a report</a>.</td></tr>';
+else data.forEach(r=>rows.innerHTML+=`<tr><td>${esc(r.item)}</td><td>${esc(r.type)}</td><td>${esc(r.category)}</td><td>${esc(r.location)}</td><td>${esc(r.date)}</td><td class="status ${statusClass(r.status)}">${esc(r.status)}</td></tr>`);
+</script></body></html>

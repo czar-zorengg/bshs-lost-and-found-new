@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Admin Claim Requests</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site-header"><div class="logo">BSHS ADMIN</div><nav><a href="admin-dashboard.html">Dashboard</a><a href="reports.html">Reports</a><a href="admin-claim-requests.html">Claim Requests</a><a href="claimed-items.html">Claimed Items</a><a href="#" onclick="adminLogout();return false">Logout</a></nav></header>
+<main class="page"><h1>All Claim Requests</h1><div class="table-wrap"><table><thead><tr><th>Item</th><th>Student</th><th>Student ID</th><th>Proof</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></main>
+<script>
+if(localStorage.getItem("bshs_admin")!=="true")location.href="admin-login.html";
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function load(){const d=JSON.parse(localStorage.getItem("bshs_claims")||"[]");document.getElementById("rows").innerHTML=d.length?d.map(c=>`<tr><td>${esc(c.item)}</td><td>${esc(c.student)}</td><td>${esc(c.studentId)}</td><td>${esc(c.proof)}</td><td>${esc(c.status)}</td><td>${c.status==="Pending"?`<button class="approve" onclick="setStatus('${c.id}','Approved')">Approve</button> <button class="danger" onclick="setStatus('${c.id}','Rejected')">Reject</button>`:"-"}</td></tr>`).join(""):'<tr><td colspan="6" class="empty">No claim requests yet.</td></tr>'}
+function setStatus(id,status){let d=JSON.parse(localStorage.getItem("bshs_claims")||"[]");d=d.map(c=>c.id===id?{...c,status}:c);localStorage.setItem("bshs_claims",JSON.stringify(d));load()}
+function adminLogout(){localStorage.removeItem("bshs_admin");location.href="admin-login.html"}load();
+</script></body></html>

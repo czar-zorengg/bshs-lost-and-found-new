@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>My Claim Requests</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site-header"><div class="logo">BSHS LOST AND FOUND HUB</div><nav id="studentNav"></nav></header>
+<main class="page"><h1>My Claim Requests</h1><p class="sub">Track the claim requests submitted from your student account.</p><div id="loginNotice"></div>
+<div class="table-wrap"><table><thead><tr><th>Item</th><th>Student ID</th><th>Proof</th><th>Date</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></main>
+<script src="app.js"></script><script>
+renderStudentNav();
+if(!isLoggedIn()){
+ document.getElementById("loginNotice").innerHTML='<div class="notice">Please <a href="students-login.html" style="font-weight:bold;color:#1e3a8a">log in</a> to view your claim requests.</div>';
+ document.getElementById("rows").innerHTML='<tr><td colspan="5" class="empty">Login is required for claim requests because claims are tied to your student account.</td></tr>';
+}else{
+ const rows=document.getElementById("rows"), data=getJSON(DB.claims).filter(c=>c.student===currentUser()).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+ if(!data.length)rows.innerHTML='<tr><td colspan="5" class="empty">No claim requests yet. <a href="items.html" style="color:#1e3a8a;font-weight:bold">Browse items</a>.</td></tr>';
+ else data.forEach(c=>rows.innerHTML+=`<tr><td>${esc(c.item)}</td><td>${esc(c.studentId)}</td><td>${esc(c.proof)}</td><td>${new Date(c.createdAt).toLocaleDateString()}</td><td class="status ${statusClass(c.status)}">${esc(c.status)}</td></tr>`);
+}
+</script></body></html>

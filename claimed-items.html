@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Claimed Items</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site-header"><div class="logo">BSHS ADMIN</div><nav><a href="admin-dashboard.html">Dashboard</a><a href="reports.html">Reports</a><a href="admin-claim-requests.html">Claim Requests</a><a href="claimed-items.html">Claimed Items</a><a href="#" onclick="adminLogout();return false">Logout</a></nav></header>
+<main class="page"><h1>Claimed Items</h1><p class="sub">Approved claim requests are listed here.</p><div class="table-wrap"><table><thead><tr><th>Item</th><th>Student</th><th>Student ID</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></main>
+<script>
+if(localStorage.getItem("bshs_admin")!=="true")location.href="admin-login.html";
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+const d=JSON.parse(localStorage.getItem("bshs_claims")||"[]").filter(c=>c.status==="Approved");document.getElementById("rows").innerHTML=d.length?d.map(c=>`<tr><td>${esc(c.item)}</td><td>${esc(c.student)}</td><td>${esc(c.studentId)}</td><td class="status approved">Approved</td></tr>`).join(""):'<tr><td colspan="4" class="empty">No approved claims yet.</td></tr>';
+function adminLogout(){localStorage.removeItem("bshs_admin");location.href="admin-login.html"}
+</script></body></html>

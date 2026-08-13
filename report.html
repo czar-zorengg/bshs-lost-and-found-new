@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Report Item</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="site-header"><div class="logo">BSHS LOST AND FOUND HUB</div><nav id="studentNav"></nav></header>
+<main class="page">
+<h1>Report Lost or Found Item</h1>
+<p class="sub">Login is optional. If you are logged in, this report will be connected to your student account.</p>
+<div id="message"></div>
+<form class="form" id="reportForm">
+<div class="form-group"><label>Report Type</label><select id="type" required><option value="">Select Type</option><option>Lost Item</option><option>Found Item</option></select></div>
+<div class="form-group"><label>Item Name</label><input id="item" required placeholder="Example: Wallet, ID, Phone"></div>
+<div class="form-group"><label>Category</label><select id="category" required><option value="">Select Category</option><option>Electronics</option><option>School Supplies</option><option>Documents and IDs</option><option>Bags</option><option>Clothing</option><option>Others</option></select></div>
+<div class="form-group"><label>Location</label><input id="location" required placeholder="Where was it lost/found?"></div>
+<div class="form-group"><label>Date</label><input id="date" type="date" required></div>
+<div class="form-group"><label>Description</label><textarea id="description" required placeholder="Describe the item, including identifying details."></textarea></div>
+<div class="form-group"><label>Photo (optional)</label><input id="photo" type="file" accept="image/*"></div>
+<button type="submit">Submit Report</button>
+</form>
+</main>
+<script src="app.js"></script>
+<script>
+renderStudentNav();
+document.getElementById("date").value=new Date().toISOString().slice(0,10);
+document.getElementById("reportForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const owner=reportOwner(), file=document.getElementById("photo").files[0];
+ const finish=(photo)=>{
+   saveReport({id:uid("report"),type:type.value,item:item.value.trim(),category:category.value,location:location.value.trim(),date:date.value,description:description.value.trim(),photo:photo||"",status:"Pending",ownerType:owner.type,ownerId:owner.id,createdAt:new Date().toISOString()});
+   alert("Report submitted successfully!");
+   window.location.href="my-reports.html";
+ };
+ if(file){
+   if(file.size>1500000){document.getElementById("message").innerHTML='<div class="notice error">Photo is too large. Please choose an image under 1.5 MB.</div>';return}
+   const reader=new FileReader();reader.onload=()=>finish(reader.result);reader.readAsDataURL(file);
+ }else finish("");
+});
+</script>
+</body></html>

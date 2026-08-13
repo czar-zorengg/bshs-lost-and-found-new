@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Student Login</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<main class="auth"><div class="auth-box">
+<h1>Student Login</h1>
+<div id="message"></div>
+<form id="loginForm">
+<div class="form-group"><label>Gmail Address</label><input id="email" type="email" required placeholder="student@gmail.com"></div>
+<div class="form-group"><label>Password</label><input id="password" type="password" required placeholder="Password"></div>
+<button type="submit" style="width:100%">LOGIN</button>
+</form>
+<p class="small-link">First time here? <a href="#" onclick="showRegister();return false;">Create Student Account</a></p>
+<div id="register" style="display:none;margin-top:22px;border-top:1px solid #e5e7eb;padding-top:20px">
+<h3 style="color:#1e3a8a;margin-bottom:15px">Create Account</h3>
+<form id="registerForm">
+<div class="form-group"><label>Gmail Address</label><input id="regEmail" type="email" required></div>
+<div class="form-group"><label>Password</label><input id="regPassword" type="password" minlength="4" required></div>
+<button type="submit" style="width:100%">CREATE ACCOUNT</button>
+</form></div>
+<p class="small-link"><a href="index.html">← Back to Home</a></p>
+</div></main>
+<script src="app.js"></script><script>
+function showRegister(){document.getElementById("register").style.display="block"}
+function goAfterLogin(){
+ const dest=localStorage.getItem("bshs_after_login")||"index.html";
+ localStorage.removeItem("bshs_after_login");
+ window.location.href=dest;
+}
+document.getElementById("loginForm").addEventListener("submit",e=>{
+ e.preventDefault(); const email=document.getElementById("email").value.trim().toLowerCase(), pass=document.getElementById("password").value;
+ const users=getJSON(DB.users,[]);
+ const u=users.find(x=>x.email===email&&x.password===pass);
+ if(!u){document.getElementById("message").innerHTML='<div class="notice error">Incorrect Gmail or password.</div>';return}
+ localStorage.setItem(DB.session,email); goAfterLogin();
+});
+document.getElementById("registerForm").addEventListener("submit",e=>{
+ e.preventDefault(); const email=document.getElementById("regEmail").value.trim().toLowerCase(), pass=document.getElementById("regPassword").value;
+ if(!email.endsWith("@gmail.com")){document.getElementById("message").innerHTML='<div class="notice error">Please use a Gmail address.</div>';return}
+ const users=getJSON(DB.users,[]);
+ if(users.some(x=>x.email===email)){document.getElementById("message").innerHTML='<div class="notice error">Account already exists. Please log in.</div>';return}
+ users.push({email,password:pass});setJSON(DB.users,users);localStorage.setItem(DB.session,email);goAfterLogin();
+});
+</script></body></html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Claim Request</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site-header"><div class="logo">BSHS LOST AND FOUND HUB</div><nav id="studentNav"></nav></header>
+<main class="page"><h1>Claim Request</h1><p class="sub">Submit proof that the selected item belongs to you.</p><div id="itemBox"></div>
+<form class="form" id="claimForm">
+<div class="form-group"><label>Your Name</label><input id="name" required></div>
+<div class="form-group"><label>Student ID</label><input id="studentId" required></div>
+<div class="form-group"><label>Why do you believe this item is yours?</label><textarea id="proof" required placeholder="Give identifying details or proof of ownership."></textarea></div>
+<div class="form-group"><label>Additional Notes (optional)</label><textarea id="notes" placeholder="Any additional information"></textarea></div>
+<button type="submit">Submit Claim Request</button>
+</form></main>
+<script src="app.js"></script><script>
+renderStudentNav();
+if(!requireStudentLogin("claim.html"+location.search)){}
+const params=new URLSearchParams(location.search), itemId=params.get("item");
+const item=getJSON(DB.reports).find(r=>r.id===itemId&&r.type==="Found Item"&&r.status==="Approved");
+if(!item){document.getElementById("itemBox").innerHTML='<div class="notice error">This item is unavailable or has not been approved.</div>';document.getElementById("claimForm").style.display="none";}
+else document.getElementById("itemBox").innerHTML=`<div class="card" style="margin-bottom:22px"><h2>${esc(item.item)}</h2><p class="meta">Category: ${esc(item.category)} · Location: ${esc(item.location)}</p><p>${esc(item.description)}</p></div>`;
+document.getElementById("claimForm").addEventListener("submit",e=>{
+ e.preventDefault(); if(!isLoggedIn())return;
+ const claims=getJSON(DB.claims); claims.push({id:uid("claim"),itemId:item.id,item:item.item,student:currentUser(),name:name.value.trim(),studentId:studentId.value.trim(),proof:proof.value.trim(),notes:notes.value.trim(),status:"Pending",createdAt:new Date().toISOString()});setJSON(DB.claims,claims);
+ alert("Claim request submitted successfully!");window.location.href="claim-requests.html";
+});
+</script></body></html>

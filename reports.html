@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Admin Reports</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site-header"><div class="logo">BSHS ADMIN</div><nav><a href="admin-dashboard.html">Dashboard</a><a href="reports.html">Reports</a><a href="admin-claim-requests.html">Claim Requests</a><a href="claimed-items.html">Claimed Items</a><a href="#" onclick="adminLogout();return false">Logout</a></nav></header>
+<main class="page"><h1>All Student Reports</h1><div class="table-wrap"><table><thead><tr><th>Item</th><th>Type</th><th>Student</th><th>Location</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></main>
+<script>
+if(localStorage.getItem("bshs_admin")!=="true")location.href="admin-login.html";
+const rows=document.getElementById("rows");
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function load(){const data=JSON.parse(localStorage.getItem("bshs_reports")||"[]");rows.innerHTML=data.length?data.map(r=>`<tr><td>${esc(r.item)}</td><td>${esc(r.type)}</td><td>${esc(r.ownerId)}</td><td>${esc(r.location)}</td><td>${esc(r.date)}</td><td>${esc(r.status)}</td><td><div class="actions">${r.status==="Pending"?`<button class="approve" onclick="setStatus('${r.id}','Approved')">Approve</button><button class="danger" onclick="setStatus('${r.id}','Rejected')">Reject</button>`:"-"}</div></td></tr>`).join(""):'<tr><td colspan="7" class="empty">No reports yet.</td></tr>'}
+function setStatus(id,status){let d=JSON.parse(localStorage.getItem("bshs_reports")||"[]");d=d.map(r=>r.id===id?{...r,status}:r);localStorage.setItem("bshs_reports",JSON.stringify(d));load()}
+function adminLogout(){localStorage.removeItem("bshs_admin");location.href="admin-login.html"}load();
+</script></body></html>

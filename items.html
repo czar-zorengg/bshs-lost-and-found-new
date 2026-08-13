@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Found Items</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site-header"><div class="logo">BSHS LOST AND FOUND HUB</div><nav id="studentNav"></nav></header>
+<main class="page"><h1>Found Items</h1><p class="sub">Choose an approved found item to submit a claim request.</p>
+<div id="grid" class="grid"></div></main>
+<script src="app.js"></script><script>
+renderStudentNav();
+const grid=document.getElementById("grid");
+const items=getJSON(DB.reports).filter(r=>r.type==="Found Item"&&r.status==="Approved");
+if(!items.length){grid.innerHTML='<div class="card empty" style="grid-column:1/-1">No approved found items are available yet.</div>'}
+else items.forEach(r=>{
+ grid.innerHTML+=`<article class="item-card">
+ ${r.photo?`<img class="item-photo" src="${r.photo}" alt="Item photo">`:`<div class="item-photo"></div>`}
+ <div class="item-body"><span class="badge found">FOUND</span><h3>${esc(r.item)}</h3>
+ <p class="meta">Category: ${esc(r.category)}</p><p class="meta">Location: ${esc(r.location)}</p><p class="meta">Date: ${esc(r.date)}</p>
+ <p style="margin:10px 0">${esc(r.description)}</p>
+ <a class="btn primary" href="claim.html?item=${encodeURIComponent(r.id)}">Claim Item</a></div></article>`;
+});
+</script></body></html>
